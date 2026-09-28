@@ -1,4 +1,4 @@
-package com.nuix.interview.robot;
+package com.nuix.interview.robot.command;
 
 /**
  * LEFT: turn the robot to its left.

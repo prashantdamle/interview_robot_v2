@@ -1,4 +1,4 @@
-package com.nuix.interview.robot;
+package com.nuix.interview.robot.command;
 
 /**
  * REPORT: add the robot's position and direction to the report.

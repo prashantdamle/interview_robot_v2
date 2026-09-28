@@ -1,4 +1,4 @@
-package com.nuix.interview.robot;
+package com.nuix.interview.robot.command;
 
 /**
  * Thrown when an input line isn't a well-formed command.

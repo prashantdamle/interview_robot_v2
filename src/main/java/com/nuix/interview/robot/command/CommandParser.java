@@ -1,4 +1,7 @@
-package com.nuix.interview.robot;
+package com.nuix.interview.robot.command;
+
+import com.nuix.interview.robot.model.Direction;
+import com.nuix.interview.robot.model.Position;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

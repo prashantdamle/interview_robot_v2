@@ -1,4 +1,4 @@
-package com.nuix.interview.robot;
+package com.nuix.interview.robot.command;
 
 /**
  * RIGHT: turn the robot to its right.

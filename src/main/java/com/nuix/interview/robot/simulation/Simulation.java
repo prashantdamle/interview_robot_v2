@@ -1,4 +1,15 @@
-package com.nuix.interview.robot;
+package com.nuix.interview.robot.simulation;
+
+import com.nuix.interview.robot.command.Command;
+import com.nuix.interview.robot.command.DeployCommand;
+import com.nuix.interview.robot.command.LeftCommand;
+import com.nuix.interview.robot.command.MoveCommand;
+import com.nuix.interview.robot.command.PitCommand;
+import com.nuix.interview.robot.command.ReportCommand;
+import com.nuix.interview.robot.command.RightCommand;
+import com.nuix.interview.robot.model.Position;
+import com.nuix.interview.robot.model.Robot;
+import com.nuix.interview.robot.model.Zone;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package com.nuix.interview.robot;
+package com.nuix.interview.robot.model;
 
 /**
  * The rectangular zone the robot explores, from 0,0 (bottom left) to width-1,height-1.
