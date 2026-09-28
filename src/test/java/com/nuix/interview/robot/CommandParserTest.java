@@ -25,4 +25,11 @@ class CommandParserTest {
                 () -> assertThrows(CommandParseException.class, () -> parser.parse("DEPLOY 99999999999,2,NORTH"))
         );
     }
+
+    @Test
+    @DisplayName("parses PIT X,Y into a pit command, rejecting a coordinate too large for an int")
+    void parsesPit() throws CommandParseException {
+        assertEquals(new PitCommand(new Position(5, 6)), parser.parse("PIT 5,6"));
+        assertThrows(CommandParseException.class, () -> parser.parse("PIT 5,99999999999"));
+    }
 }

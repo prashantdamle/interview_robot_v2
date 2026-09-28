@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 public class CommandParser {
 
     private static final Pattern DEPLOY = Pattern.compile("DEPLOY (-?\\d+),(-?\\d+),(\\w+)");
+    private static final Pattern PIT = Pattern.compile("PIT (-?\\d+),(-?\\d+)");
 
     public Command parse(String line) throws CommandParseException {
         String trimmed = line.trim();
@@ -18,6 +19,11 @@ public class CommandParser {
         if (deploy.matches()) {
             Position position = new Position(parseCoordinate(deploy.group(1), line), parseCoordinate(deploy.group(2), line));
             return new DeployCommand(position, parseDirection(deploy.group(3), line));
+        }
+
+        Matcher pit = PIT.matcher(trimmed);
+        if (pit.matches()) {
+            return new PitCommand(new Position(parseCoordinate(pit.group(1), line), parseCoordinate(pit.group(2), line)));
         }
 
         throw new CommandParseException("Unrecognised command: '" + line + "'");
