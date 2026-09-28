@@ -73,6 +73,18 @@ class SimulationTest {
     }
 
     @Test
+    @DisplayName("PIT where a pit already is is ignored without a report line")
+    void duplicatePitIsIgnored() throws CommandIgnoredException {
+        simulation.apply(new DeployCommand(new Position(0, 0), Direction.NORTH));
+        simulation.apply(new PitCommand(new Position(4, 4)));
+
+        assertAll(
+                () -> assertThrows(CommandIgnoredException.class, () -> simulation.apply(new PitCommand(new Position(4, 4)))),
+                () -> assertEquals(List.of(), simulation.report())
+        );
+    }
+
+    @Test
     @DisplayName("every command before the first DEPLOY is ignored, including REPORT")
     void ignoresCommandsBeforeFirstDeploy() {
         assertAll(

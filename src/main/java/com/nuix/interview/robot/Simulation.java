@@ -68,6 +68,8 @@ public class Simulation {
             report.add(Rejection.ROBOT_DETECTED.message());
             return;
         }
-        pits.add(pit.position());
+        if (!pits.add(pit.position())) {
+            throw new CommandIgnoredException("ignored: there is already a pit at " + pit.position().x() + "," + pit.position().y());
+        }
     }
 }
