@@ -19,6 +19,7 @@ public class RobotSimulatorTest {
     private RobotSimulator robotSimulator = new RobotSimulator();
 
     @Test
+    @DisplayName("a deploy, turn and move reports the new position")
     public void testRobotSimulator_SimpleTest_ReportSuccess() {
         StringBuilder input = new StringBuilder();
         input.append("DEPLOY 0,0,NORTH\n");
@@ -38,6 +39,7 @@ public class RobotSimulatorTest {
     }
 
     @Test
+    @DisplayName("a second DEPLOY redeploys the same robot")
     public void testRobotSimulator_SimpleTest2Deploys_ReportSuccess() {
         StringBuilder input = new StringBuilder();
         input.append("DEPLOY 0,0,NORTH\n");
@@ -60,6 +62,7 @@ public class RobotSimulatorTest {
     }
 
     @Test
+    @DisplayName("DEPLOY outside the zone or onto a pit is rejected and the robot stays put")
     public void testRobotSimulator_DeployInvalid_Ignores() {
         StringBuilder input = new StringBuilder();
         input.append("DEPLOY 10,9,NORTH\n");
@@ -80,6 +83,7 @@ public class RobotSimulatorTest {
     }
 
     @Test
+    @DisplayName("PIT is only accepted straight after a DEPLOY or another PIT")
     public void testRobotSimulator_PitOnlyAfterDeploy_Ignores() {
         StringBuilder input = new StringBuilder();
         input.append("DEPLOY 10,9,NORTH\n");
@@ -103,6 +107,7 @@ public class RobotSimulatorTest {
     }
 
     @Test
+    @DisplayName("PIT on the robot is rejected with ROBOT Detected")
     public void testRobotSimulator_PitOverRobot_Fails() {
         StringBuilder input = new StringBuilder();
         input.append("DEPLOY 1,1,EAST\n");
@@ -120,6 +125,7 @@ public class RobotSimulatorTest {
     }
 
     @Test
+    @DisplayName("commands before the first DEPLOY are ignored")
     public void testRobotSimulator_LeadingCommands_Ignore() {
         StringBuilder input = new StringBuilder();
         input.append("REPORT\n");
@@ -141,6 +147,7 @@ public class RobotSimulatorTest {
     }
 
     @Test
+    @DisplayName("MOVE into a pit is rejected with PIT Detected")
     public void testRobotSimulator_MoveToPit_Ignores() {
         StringBuilder input = new StringBuilder();
         input.append("DEPLOY 0,0,NORTH\n");
@@ -163,6 +170,7 @@ public class RobotSimulatorTest {
     }
 
     @Test
+    @DisplayName("MOVE off the zone is rejected with Outside Zone")
     public void testRobotSimulator_MoveOffBoard_Ignores() {
         StringBuilder input = new StringBuilder();
         input.append("DEPLOY 0,0,SOUTH\n");
@@ -186,6 +194,7 @@ public class RobotSimulatorTest {
     }
 
     @Test
+    @DisplayName("lines that fail to parse are skipped and processing continues")
     public void testRobotSimulator_InvalidCommands_Ignores() {
         StringBuilder input = new StringBuilder();
         input.append("DEPLOY 0,ORTH\n");
@@ -206,6 +215,7 @@ public class RobotSimulatorTest {
     }
 
     @Test
+    @DisplayName("driving into every wall is rejected and the robot ends back at the start")
     public void testRobotSimulator_HitAllWalls_Ignores() {
         StringBuilder input = new StringBuilder();
         input.append("DEPLOY 0,0,NORTH\n");
@@ -229,6 +239,7 @@ public class RobotSimulatorTest {
     }
 
     @Test
+    @DisplayName("the returned report is immutable and each call starts afresh")
     public void testRobotSimulator_ChangeReport_ShouldBeImmutable() {
         StringBuilder input = new StringBuilder();
         input.append("DEPLOY 0,0,NORTH\n");
@@ -262,6 +273,7 @@ public class RobotSimulatorTest {
     }
 
     @Test
+    @DisplayName("a very large input is streamed without running out of memory")
     public void testRobotSimulator_MassiveListOfCommands_DoesntRunOOM() {
         StringBuilder input = new StringBuilder();
         input.append("DEPLOY 0,0,NORTH\n");
