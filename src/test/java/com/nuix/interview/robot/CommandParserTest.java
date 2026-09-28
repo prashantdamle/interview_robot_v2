@@ -45,6 +45,19 @@ class CommandParserTest {
     }
 
     @Test
+    @DisplayName("parse failure messages give the reason without repeating the line")
+    void parseFailureMessagesGiveReason() {
+        assertAll(
+                () -> assertEquals("not parsed: not a valid command",
+                        assertThrows(CommandParseException.class, () -> parser.parse("RIHT")).getMessage()),
+                () -> assertEquals("not parsed: unknown direction 'UP'",
+                        assertThrows(CommandParseException.class, () -> parser.parse("DEPLOY 1,2,UP")).getMessage()),
+                () -> assertEquals("not parsed: coordinate '99999999999' out of range",
+                        assertThrows(CommandParseException.class, () -> parser.parse("PIT 99999999999,2")).getMessage())
+        );
+    }
+
+    @Test
     @DisplayName("ignores leading and trailing whitespace")
     void ignoresSurroundingWhitespace() {
         assertAll(

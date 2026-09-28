@@ -29,31 +29,31 @@ public class CommandParser {
 
         Matcher deploy = DEPLOY.matcher(trimmed);
         if (deploy.matches()) {
-            Position position = new Position(parseCoordinate(deploy.group(1), line), parseCoordinate(deploy.group(2), line));
-            return new DeployCommand(position, parseDirection(deploy.group(3), line));
+            Position position = new Position(parseCoordinate(deploy.group(1)), parseCoordinate(deploy.group(2)));
+            return new DeployCommand(position, parseDirection(deploy.group(3)));
         }
 
         Matcher pit = PIT.matcher(trimmed);
         if (pit.matches()) {
-            return new PitCommand(new Position(parseCoordinate(pit.group(1), line), parseCoordinate(pit.group(2), line)));
+            return new PitCommand(new Position(parseCoordinate(pit.group(1)), parseCoordinate(pit.group(2))));
         }
 
-        throw new CommandParseException("Unrecognised command: '" + line + "'");
+        throw new CommandParseException("not parsed: not a valid command");
     }
 
-    private int parseCoordinate(String coordinate, String line) throws CommandParseException {
+    private int parseCoordinate(String coordinate) throws CommandParseException {
         try {
             return Integer.parseInt(coordinate);
         } catch (NumberFormatException e) {
-            throw new CommandParseException("Coordinate out of range in '" + line + "'", e);
+            throw new CommandParseException("not parsed: coordinate '" + coordinate + "' out of range", e);
         }
     }
 
-    private Direction parseDirection(String direction, String line) throws CommandParseException {
+    private Direction parseDirection(String direction) throws CommandParseException {
         try {
             return Direction.valueOf(direction);
         } catch (IllegalArgumentException e) {
-            throw new CommandParseException("Unknown direction in '" + line + "'", e);
+            throw new CommandParseException("not parsed: unknown direction '" + direction + "'", e);
         }
     }
 }
