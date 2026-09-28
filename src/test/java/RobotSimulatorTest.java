@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestRobotSimulator {
+public class RobotSimulatorTest {
     private RobotSimulator robotSimulator = new RobotSimulator();
 
     @Test
