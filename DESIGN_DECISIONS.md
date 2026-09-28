@@ -32,6 +32,7 @@ implies, or, where neither settles it, on our own choice.
 | TODO added in `testRobotSimulator_ChangeReport_ShouldBeImmutable` on the `reset()` check | Closing a `ByteArrayInputStream` has no effect, so that check can never fail. `doesNotCloseInput` covers the requirement properly. |
 | `RobotSimulator`: implemented `process()`; added a `RobotSimulator(PrintStream)` constructor | The constructor lets tests capture the error log without replacing `System.err`. The no-argument constructor still logs to `System.err`. |
 | `build.gradle`: `options.release = 21` | Pins the language level (records, sealed interfaces, pattern-matching `switch`) while still building on any newer JDK. |
+| `build.gradle`: JaCoCo plugin | `./gradlew jacocoTestReport` produces a coverage report. The tool version is pinned to one that supports current JDKs. |
 | Added `.gitignore`; `gradlew` marked executable | Build output and IDE files aren't tracked, and `./gradlew` runs after unzipping. |
 
 ## Design

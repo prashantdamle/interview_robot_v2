@@ -13,6 +13,9 @@ JDK 21 or later. The Gradle wrapper downloads Gradle itself.
 ./gradlew test
 ```
 
+To also get a coverage report, run `./gradlew jacocoTestReport`, then open
+`build/reports/jacoco/test/html/index.html`.
+
 ## Where to look
 
 - [`RobotSimulator`](src/main/java/RobotSimulator.java): the entry point. It reads the input and logs lines that
