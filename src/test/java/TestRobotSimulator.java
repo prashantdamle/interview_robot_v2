@@ -236,11 +236,8 @@ public class TestRobotSimulator {
 
         try (InputStream is = new ByteArrayInputStream(input.toString().getBytes())) {
             List<String> process = robotSimulator.process(is);
-            try {
-                process.add("TEST MUTABLE");
-            } catch (Exception e) {
-                System.out.println("List is immutable +1 bonus point");
-            }
+            List<String> firstReport = process;
+            assertThrows(UnsupportedOperationException.class, () -> firstReport.add("TEST MUTABLE"), "Report list isn't immutable.");
             try {
                 is.reset();
             } catch (Exception e) {
