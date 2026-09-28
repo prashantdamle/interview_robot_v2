@@ -32,4 +32,15 @@ class CommandParserTest {
         assertEquals(new PitCommand(new Position(5, 6)), parser.parse("PIT 5,6"));
         assertThrows(CommandParseException.class, () -> parser.parse("PIT 5,99999999999"));
     }
+
+    @Test
+    @DisplayName("parses MOVE, LEFT, RIGHT and REPORT")
+    void parsesCommandsWithoutArguments() {
+        assertAll(
+                () -> assertEquals(new MoveCommand(), parser.parse("MOVE")),
+                () -> assertEquals(new LeftCommand(), parser.parse("LEFT")),
+                () -> assertEquals(new RightCommand(), parser.parse("RIGHT")),
+                () -> assertEquals(new ReportCommand(), parser.parse("REPORT"))
+        );
+    }
 }

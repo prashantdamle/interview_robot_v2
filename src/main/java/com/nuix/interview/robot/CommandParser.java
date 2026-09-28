@@ -15,6 +15,18 @@ public class CommandParser {
     public Command parse(String line) throws CommandParseException {
         String trimmed = line.trim();
 
+        // Commands without arguments; anything else falls through to the patterns below.
+        switch (trimmed) {
+            case "MOVE":
+                return new MoveCommand();
+            case "LEFT":
+                return new LeftCommand();
+            case "RIGHT":
+                return new RightCommand();
+            case "REPORT":
+                return new ReportCommand();
+        }
+
         Matcher deploy = DEPLOY.matcher(trimmed);
         if (deploy.matches()) {
             Position position = new Position(parseCoordinate(deploy.group(1), line), parseCoordinate(deploy.group(2), line));
