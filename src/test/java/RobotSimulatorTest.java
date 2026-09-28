@@ -1,8 +1,12 @@
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -273,6 +277,36 @@ public class RobotSimulatorTest {
             e.printStackTrace();
             fail("Exception thrown: " + e.getMessage());
         }
+    }
+
+    @Test
+    @DisplayName("logs each malformed or ignored line with its line number and reason, and carries on")
+    void logsMalformedAndIgnoredLines() {
+        ByteArrayOutputStream errors = new ByteArrayOutputStream();
+        RobotSimulator simulator = new RobotSimulator(new PrintStream(errors, true, StandardCharsets.UTF_8));
+
+        List<String> report = simulator.process(lines(
+                "REPORT",
+                "DEPLOY 0,0,NORTH",
+                "RIHT",
+                "MOVE",
+                "PIT 3,3",
+                "REPORT"));
+
+        assertEquals(List.of("0,1,NORTH"), report);
+        assertEquals(List.of(
+                "Line 1: 'REPORT' ignored: no robot deployed yet",
+                "Line 3: 'RIHT' not parsed: not a valid command",
+                "Line 5: 'PIT 3,3' ignored: PIT must follow a DEPLOY or another PIT"
+        ), errors.toString(StandardCharsets.UTF_8).lines().toList());
+    }
+
+    /**
+     * @return an input stream of the given lines, each terminated by \n.
+     */
+    private static InputStream lines(String... lines) {
+        String text = String.join("\n", lines) + "\n";
+        return new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
     }
 
     private InputStream getImpossibleIS(byte[] repeatingBytes, int maxSize) {
