@@ -41,6 +41,15 @@ public class Simulation {
     }
 
     private void deploy(DeployCommand deploy) {
-        robot = new Robot(deploy.position(), deploy.facing());
+        if (!zone.contains(deploy.position())) {
+            report.add(Rejection.OUTSIDE_ZONE.message());
+            return;
+        }
+        // There is only one robot: the first successful DEPLOY creates it, later ones move it.
+        if (robot == null) {
+            robot = new Robot(deploy.position(), deploy.facing());
+        } else {
+            robot.deployTo(deploy.position(), deploy.facing());
+        }
     }
 }

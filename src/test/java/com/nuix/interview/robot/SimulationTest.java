@@ -23,6 +23,19 @@ class SimulationTest {
     }
 
     @Test
+    @DisplayName("DEPLOY outside the zone reports 'Outside Zone' and leaves the robot as it was (or undeployed)")
+    void deployOutsideZoneIsRejected() throws CommandIgnoredException {
+        simulation.apply(new DeployCommand(new Position(10, 9), Direction.NORTH));
+        assertThrows(CommandIgnoredException.class, () -> simulation.apply(new ReportCommand()));
+
+        simulation.apply(new DeployCommand(new Position(0, 0), Direction.NORTH));
+        simulation.apply(new DeployCommand(new Position(-1, 5), Direction.EAST));
+        simulation.apply(new ReportCommand());
+
+        assertEquals(List.of("Outside Zone: Ignored", "Outside Zone: Ignored", "0,0,NORTH"), simulation.report());
+    }
+
+    @Test
     @DisplayName("every command before the first DEPLOY is ignored, including REPORT")
     void ignoresCommandsBeforeFirstDeploy() {
         assertAll(
