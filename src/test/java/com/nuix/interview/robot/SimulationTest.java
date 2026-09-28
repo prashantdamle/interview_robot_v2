@@ -107,6 +107,24 @@ class SimulationTest {
     }
 
     @Test
+    @DisplayName("a failed DEPLOY leaves the PIT window as it was; REPORT and PIT keep it open")
+    void failedDeployLeavesPitWindowUnchanged() throws CommandIgnoredException {
+        // Window open: a failed DEPLOY doesn't close it, nor do REPORT or another PIT.
+        simulation.apply(new DeployCommand(new Position(0, 0), Direction.NORTH));
+        simulation.apply(new DeployCommand(new Position(10, 10), Direction.NORTH));
+        simulation.apply(new ReportCommand());
+        simulation.apply(new PitCommand(new Position(5, 5)));
+        simulation.apply(new PitCommand(new Position(6, 6)));
+
+        // Window closed: a failed DEPLOY doesn't open it.
+        simulation.apply(new MoveCommand());
+        simulation.apply(new DeployCommand(new Position(5, 5), Direction.NORTH));
+        assertThrows(CommandIgnoredException.class, () -> simulation.apply(new PitCommand(new Position(7, 7))));
+
+        assertEquals(List.of("Outside Zone: Ignored", "0,0,NORTH", "PIT Detected: Ignored"), simulation.report());
+    }
+
+    @Test
     @DisplayName("MOVE moves the robot one step forward on a clear path")
     void movesForwardOnClearPath() throws CommandIgnoredException {
         simulation.apply(new DeployCommand(new Position(0, 0), Direction.NORTH));
