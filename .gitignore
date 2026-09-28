@@ -4,6 +4,7 @@ build/
 
 # IDE files
 .idea/
+.vscode/
 *.iml
 out/
 
