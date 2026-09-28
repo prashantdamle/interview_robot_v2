@@ -12,6 +12,7 @@ import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The application is a simulation of a Rover Robot moving on a square zone to be explored, of
@@ -68,7 +69,7 @@ public class RobotSimulator {
      * @param errors where lines that are malformed or ignored are logged.
      */
     public RobotSimulator(PrintStream errors) {
-        this.errors = errors;
+        this.errors = Objects.requireNonNull(errors, "errors");
     }
 
     /**
@@ -81,6 +82,7 @@ public class RobotSimulator {
      * @throws UncheckedIOException if the input can't be read.
      */
     public List<String> process(InputStream input) {
+        Objects.requireNonNull(input, "input");
         Simulation simulation = new Simulation(new Zone(ZONE_WIDTH, ZONE_HEIGHT));
         // Not closed: closing the reader would close the caller's stream.
         BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));

@@ -373,6 +373,17 @@ public class RobotSimulatorTest {
         assertEquals(List.of("0,0,NORTH"), report);
     }
 
+    @Test
+    @DisplayName("a null error stream or input is rejected straight away with a clear message")
+    void rejectsNullArguments() {
+        assertAll(
+                () -> assertEquals("errors",
+                        assertThrows(NullPointerException.class, () -> new RobotSimulator(null)).getMessage()),
+                () -> assertEquals("input",
+                        assertThrows(NullPointerException.class, () -> robotSimulator.process(null)).getMessage())
+        );
+    }
+
     /**
      * @return an input stream of the given lines, each terminated by \n.
      */
