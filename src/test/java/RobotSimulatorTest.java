@@ -7,6 +7,7 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -320,6 +321,26 @@ public class RobotSimulatorTest {
         robotSimulator.process(input);
 
         assertFalse(closed.get(), "process() closed the caller's input stream");
+    }
+
+    @Test
+    @DisplayName("a failure reading the input is logged and rethrown as UncheckedIOException")
+    void readFailureIsLoggedAndRethrown() {
+        ByteArrayOutputStream errors = new ByteArrayOutputStream();
+        RobotSimulator simulator = new RobotSimulator(new PrintStream(errors, true, StandardCharsets.UTF_8));
+        IOException failure = new IOException("disk on fire");
+        InputStream failing = new InputStream() {
+            @Override
+            public int read() throws IOException {
+                throw failure;
+            }
+        };
+
+        UncheckedIOException thrown = assertThrows(UncheckedIOException.class, () -> simulator.process(failing));
+
+        assertSame(failure, thrown.getCause());
+        assertEquals(List.of("Failed to read input after line 0: disk on fire"),
+                errors.toString(StandardCharsets.UTF_8).lines().toList());
     }
 
     /**
