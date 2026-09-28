@@ -43,4 +43,31 @@ class CommandParserTest {
                 () -> assertEquals(new ReportCommand(), parser.parse("REPORT"))
         );
     }
+
+    @Test
+    @DisplayName("ignores leading and trailing whitespace")
+    void ignoresSurroundingWhitespace() {
+        assertAll(
+                () -> assertEquals(new MoveCommand(), parser.parse("  MOVE\t")),
+                () -> assertEquals(new PitCommand(new Position(1, 1)), parser.parse(" PIT 1,1 "))
+        );
+    }
+
+    @Test
+    @DisplayName("rejects malformed lines: wrong case, extra spaces, extra or missing arguments, blank or unknown")
+    void rejectsMalformedLines() {
+        assertAll(
+                () -> assertThrows(CommandParseException.class, () -> parser.parse("move")),
+                () -> assertThrows(CommandParseException.class, () -> parser.parse("DEPLOY 1,2,north")),
+                () -> assertThrows(CommandParseException.class, () -> parser.parse("DEPLOY  1,2,NORTH")),
+                () -> assertThrows(CommandParseException.class, () -> parser.parse("PIT 1, 2")),
+                () -> assertThrows(CommandParseException.class, () -> parser.parse("MOVE 1")),
+                () -> assertThrows(CommandParseException.class, () -> parser.parse("PIT 1,2,NORTH")),
+                () -> assertThrows(CommandParseException.class, () -> parser.parse("DEPLOY 0,ORTH")),
+                () -> assertThrows(CommandParseException.class, () -> parser.parse("DEPLOY 1.5,2,NORTH")),
+                () -> assertThrows(CommandParseException.class, () -> parser.parse("RIHT")),
+                () -> assertThrows(CommandParseException.class, () -> parser.parse("")),
+                () -> assertThrows(CommandParseException.class, () -> parser.parse("   "))
+        );
+    }
 }
