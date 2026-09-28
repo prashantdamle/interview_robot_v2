@@ -1,10 +1,14 @@
 package com.nuix.interview.robot;
 
+import java.util.Locale;
+
 /**
  * The robot: where it is and which way it faces. It knows nothing of the zone or pits, so the caller checks
  * {@link #nextPosition()} is safe before calling {@link #move()}.
  */
 public class Robot {
+
+    private static final String REPORT_FORMAT = "%d,%d,%s";
 
     private Position position;
     private Direction facing;
@@ -42,5 +46,12 @@ public class Robot {
 
     public void turnRight() {
         facing = facing.right();
+    }
+
+    /**
+     * @return the robot's report line, "X,Y,DIRECTION".
+     */
+    public String report() {
+        return String.format(Locale.ROOT, REPORT_FORMAT,position.x(), position.y(), facing);
     }
 }

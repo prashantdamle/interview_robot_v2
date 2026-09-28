@@ -3,6 +3,8 @@ package com.nuix.interview.robot;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Locale;
+
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -38,5 +40,27 @@ class RobotTest {
                 () -> assertEquals(Direction.WEST, robot.facing()),
                 () -> assertEquals(new Position(2, 3), robot.position())
         );
+    }
+
+    @Test
+    @DisplayName("report() formats the robot as X,Y,DIRECTION")
+    void reportFormatsPositionAndDirection() {
+        Robot robot = new Robot(new Position(1, 0), Direction.EAST);
+
+        assertEquals("1,0,EAST", robot.report());
+    }
+
+    @Test
+    @DisplayName("report() uses ASCII digits whatever the default locale")
+    void reportIgnoresDefaultLocale() {
+        Robot robot = new Robot(new Position(1, 0), Direction.EAST);
+        Locale original = Locale.getDefault();
+        // Arabic (Egypt) formats numbers with Arabic-Indic digits.
+        Locale.setDefault(Locale.forLanguageTag("ar-EG"));
+        try {
+            assertEquals("1,0,EAST", robot.report());
+        } finally {
+            Locale.setDefault(original);
+        }
     }
 }
