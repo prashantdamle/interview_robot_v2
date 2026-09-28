@@ -1,4 +1,4 @@
-package com.nuix.interview.robot;
+package com.nuix.interview.robot.model;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

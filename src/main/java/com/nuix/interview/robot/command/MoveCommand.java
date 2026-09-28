@@ -1,4 +1,4 @@
-package com.nuix.interview.robot;
+package com.nuix.interview.robot.command;
 
 /**
  * MOVE: move the robot one step forward.

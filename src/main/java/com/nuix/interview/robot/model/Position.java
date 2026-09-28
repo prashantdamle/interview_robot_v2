@@ -1,4 +1,4 @@
-package com.nuix.interview.robot;
+package com.nuix.interview.robot.model;
 
 /**
  * A coordinate in the zone, with 0,0 at the bottom left corner. Immutable, so it can be used as a pit in a set.

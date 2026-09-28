@@ -1,4 +1,4 @@
-package com.nuix.interview.robot;
+package com.nuix.interview.robot.simulation;
 
 /**
  * Thrown when a well-formed command is dropped without effect, e.g. a PIT that doesn't follow a DEPLOY.

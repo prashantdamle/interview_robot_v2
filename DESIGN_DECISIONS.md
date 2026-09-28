@@ -6,7 +6,7 @@ The spec leaves some behaviour open. Each assumption below is based on the spec'
 implies, or, where neither settles it, on our own choice.
 
 | # | Assumption | Basis |
-|---|------------|-------|
+| --- | ---------- | ----- |
 | 1 | The returned report holds `REPORT` lines and the three `...: Ignored` messages, in order. Parse failures and dropped commands go to `System.err`, never to the report. | Provided tests expect the `Ignored` messages in the returned list; the spec sends parse failures to `System.err`. |
 | 2 | Until a DEPLOY succeeds, every other command is ignored, including `REPORT`, which then outputs nothing. | Spec: "Commands before this can be safely ignored"; `testRobotSimulator_LeadingCommands_Ignore` expects no output for a leading `REPORT`. |
 | 3 | A DEPLOY that fails before any robot exists still reports its error. | `testRobotSimulator_DeployInvalid_Ignores` and `testRobotSimulator_PitOnlyAfterDeploy_Ignores` both start with `Outside Zone: Ignored`. |
@@ -24,7 +24,7 @@ implies, or, where neither settles it, on our own choice.
 ## Changes to provided code
 
 | Change | Why |
-|--------|-----|
+| ------ | --- |
 | `TestRobotSimulator` renamed to `RobotSimulatorTest`, and our extra `RobotSimulator` tests added to it | Keeps all `RobotSimulator` tests in one conventionally named class. The provided test methods are unchanged apart from the fixes below. |
 | `assertArrayEquals` arguments swapped in `testRobotSimulator_MoveOffBoard_Ignores`, `testRobotSimulator_InvalidCommands_Ignores` and `testRobotSimulator_HitAllWalls_Ignores` | They passed `(actual, expected)`, so failure messages would have shown our output as the expected value. |
 | `testRobotSimulator_ChangeReport_ShouldBeImmutable` now asserts `add()` throws `UnsupportedOperationException` | It caught any exception from `add()` and printed a message, so it could never fail on a mutable list. |
@@ -32,6 +32,7 @@ implies, or, where neither settles it, on our own choice.
 | TODO added in `testRobotSimulator_ChangeReport_ShouldBeImmutable` on the `reset()` check | Closing a `ByteArrayInputStream` has no effect, so that check can never fail. `doesNotCloseInput` covers the requirement properly. |
 | `RobotSimulator`: implemented `process()`; added a `RobotSimulator(PrintStream)` constructor | The constructor lets tests capture the error log without replacing `System.err`. The no-argument constructor still logs to `System.err`. |
 | `build.gradle`: `options.release = 21` | Pins the language level (records, sealed interfaces, pattern-matching `switch`) while still building on any newer JDK. |
+| `build.gradle`: JaCoCo plugin | `./gradlew jacocoTestReport` produces a coverage report. The tool version is pinned to one that supports current JDKs. |
 | Added `.gitignore`; `gradlew` marked executable | Build output and IDE files aren't tracked, and `./gradlew` runs after unzipping. |
 
 ## Design
@@ -42,6 +43,13 @@ implies, or, where neither settles it, on our own choice.
   - `Simulation` holds the rules and the state of a single run.
 
   `Simulation` never sees text or streams, so each rule is tested directly with commands in `SimulationTest`.
+- **Packages** under `com.nuix.interview.robot`. Dependencies only go one way, down this list:
+  - `simulation`: the rules and their outcomes (`Simulation`, `Rejection`, `CommandIgnoredException`).
+  - `command`: parsing and the commands (`CommandParser`, `Command` and its records, `CommandParseException`).
+  - `model`: the board (`Direction`, `Position`, `Robot`, `Zone`).
+
+  `Rejection` is package-private because only `Simulation` uses it. `RobotSimulator` stays in the default
+  package, where the provided test expects it.
 - **Commands** are records implementing a sealed `Command` interface. `Simulation` handles them in an exhaustive
   `switch`, so a new command that isn't handled fails to compile.
 - **Robot** is mutable, like the one physical rover on the board. It knows nothing of the zone or pits:

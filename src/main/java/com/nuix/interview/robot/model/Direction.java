@@ -1,4 +1,4 @@
-package com.nuix.interview.robot;
+package com.nuix.interview.robot.model;
 
 /**
  * The compass direction the robot faces.

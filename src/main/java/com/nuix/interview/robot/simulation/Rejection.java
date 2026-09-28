@@ -1,9 +1,9 @@
-package com.nuix.interview.robot;
+package com.nuix.interview.robot.simulation;
 
 /**
  * The report lines for commands the rules reject, in the exact format the spec requires.
  */
-public enum Rejection {
+enum Rejection {
     OUTSIDE_ZONE("Outside Zone: Ignored"),
     PIT_DETECTED("PIT Detected: Ignored"),
     ROBOT_DETECTED("ROBOT Detected: Ignored");

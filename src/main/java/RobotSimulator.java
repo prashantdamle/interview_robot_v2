@@ -1,8 +1,8 @@
-import com.nuix.interview.robot.CommandIgnoredException;
-import com.nuix.interview.robot.CommandParseException;
-import com.nuix.interview.robot.CommandParser;
-import com.nuix.interview.robot.Simulation;
-import com.nuix.interview.robot.Zone;
+import com.nuix.interview.robot.command.CommandParseException;
+import com.nuix.interview.robot.command.CommandParser;
+import com.nuix.interview.robot.model.Zone;
+import com.nuix.interview.robot.simulation.CommandIgnoredException;
+import com.nuix.interview.robot.simulation.Simulation;
 
 import java.io.BufferedReader;
 import java.io.IOException;
