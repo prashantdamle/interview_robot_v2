@@ -36,6 +36,19 @@ class SimulationTest {
     }
 
     @Test
+    @DisplayName("DEPLOY onto a pit reports 'PIT Detected' and keeps the robot; a valid redeploy moves it")
+    void deployOntoPitIsRejectedAndValidRedeployMovesRobot() throws CommandIgnoredException {
+        simulation.apply(new DeployCommand(new Position(0, 0), Direction.NORTH));
+        simulation.apply(new PitCommand(new Position(5, 5)));
+        simulation.apply(new DeployCommand(new Position(5, 5), Direction.EAST));
+        simulation.apply(new ReportCommand());
+        simulation.apply(new DeployCommand(new Position(5, 6), Direction.SOUTH));
+        simulation.apply(new ReportCommand());
+
+        assertEquals(List.of("PIT Detected: Ignored", "0,0,NORTH", "5,6,SOUTH"), simulation.report());
+    }
+
+    @Test
     @DisplayName("every command before the first DEPLOY is ignored, including REPORT")
     void ignoresCommandsBeforeFirstDeploy() {
         assertAll(

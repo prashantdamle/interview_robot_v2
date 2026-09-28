@@ -2,7 +2,9 @@ package com.nuix.interview.robot;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * One run of the robot in a zone: applies commands according to the rules and collects the report lines.
@@ -10,6 +12,7 @@ import java.util.List;
 public class Simulation {
 
     private final Zone zone;
+    private final Set<Position> pits = new HashSet<>();
     private final List<String> report = new ArrayList<>();
     private Robot robot;
 
@@ -26,7 +29,7 @@ public class Simulation {
         switch (command) {
             case DeployCommand deploy -> deploy(deploy);
             case ReportCommand ignored -> report.add(robot.report());
-            case PitCommand ignored -> throw new UnsupportedOperationException("PIT not implemented yet");
+            case PitCommand pit -> pits.add(pit.position());
             case MoveCommand ignored -> throw new UnsupportedOperationException("MOVE not implemented yet");
             case LeftCommand ignored -> throw new UnsupportedOperationException("LEFT not implemented yet");
             case RightCommand ignored -> throw new UnsupportedOperationException("RIGHT not implemented yet");
@@ -43,6 +46,10 @@ public class Simulation {
     private void deploy(DeployCommand deploy) {
         if (!zone.contains(deploy.position())) {
             report.add(Rejection.OUTSIDE_ZONE.message());
+            return;
+        }
+        if (pits.contains(deploy.position())) {
+            report.add(Rejection.PIT_DETECTED.message());
             return;
         }
         // There is only one robot: the first successful DEPLOY creates it, later ones move it.
