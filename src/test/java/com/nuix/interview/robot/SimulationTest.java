@@ -117,6 +117,19 @@ class SimulationTest {
     }
 
     @Test
+    @DisplayName("LEFT and RIGHT turn the robot in place")
+    void turnsInPlace() throws CommandIgnoredException {
+        simulation.apply(new DeployCommand(new Position(3, 3), Direction.SOUTH));
+        simulation.apply(new LeftCommand());
+        simulation.apply(new ReportCommand());
+        simulation.apply(new RightCommand());
+        simulation.apply(new RightCommand());
+        simulation.apply(new ReportCommand());
+
+        assertEquals(List.of("3,3,EAST", "3,3,WEST"), simulation.report());
+    }
+
+    @Test
     @DisplayName("every command before the first DEPLOY is ignored, including REPORT")
     void ignoresCommandsBeforeFirstDeploy() {
         assertAll(

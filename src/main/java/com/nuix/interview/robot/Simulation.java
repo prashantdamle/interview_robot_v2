@@ -31,8 +31,8 @@ public class Simulation {
             case ReportCommand ignored -> report.add(robot.report());
             case PitCommand pit -> addPit(pit);
             case MoveCommand ignored -> move();
-            case LeftCommand ignored -> throw new UnsupportedOperationException("LEFT not implemented yet");
-            case RightCommand ignored -> throw new UnsupportedOperationException("RIGHT not implemented yet");
+            case LeftCommand ignored -> robot.turnLeft();
+            case RightCommand ignored -> robot.turnRight();
         }
     }
 
