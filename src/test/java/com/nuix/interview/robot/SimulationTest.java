@@ -85,6 +85,28 @@ class SimulationTest {
     }
 
     @Test
+    @DisplayName("MOVE, LEFT and RIGHT each close the PIT window; a successful DEPLOY reopens it")
+    void moveAndTurnsClosePitWindow() throws CommandIgnoredException {
+        simulation.apply(new DeployCommand(new Position(0, 0), Direction.NORTH));
+        simulation.apply(new MoveCommand());
+        assertThrows(CommandIgnoredException.class, () -> simulation.apply(new PitCommand(new Position(5, 5))));
+
+        simulation.apply(new DeployCommand(new Position(0, 0), Direction.NORTH));
+        simulation.apply(new LeftCommand());
+        assertThrows(CommandIgnoredException.class, () -> simulation.apply(new PitCommand(new Position(5, 5))));
+
+        simulation.apply(new DeployCommand(new Position(0, 0), Direction.NORTH));
+        simulation.apply(new RightCommand());
+        assertThrows(CommandIgnoredException.class, () -> simulation.apply(new PitCommand(new Position(5, 5))));
+
+        simulation.apply(new DeployCommand(new Position(0, 0), Direction.NORTH));
+        simulation.apply(new PitCommand(new Position(5, 5)));
+        simulation.apply(new DeployCommand(new Position(5, 5), Direction.NORTH));
+
+        assertEquals(List.of("PIT Detected: Ignored"), simulation.report());
+    }
+
+    @Test
     @DisplayName("MOVE moves the robot one step forward on a clear path")
     void movesForwardOnClearPath() throws CommandIgnoredException {
         simulation.apply(new DeployCommand(new Position(0, 0), Direction.NORTH));

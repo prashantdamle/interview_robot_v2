@@ -15,6 +15,8 @@ public class Simulation {
     private final Set<Position> pits = new HashSet<>();
     private final List<String> report = new ArrayList<>();
     private Robot robot;
+    // PITs are only accepted straight after a successful DEPLOY or another PIT; MOVE, LEFT and RIGHT end that run.
+    private boolean pitWindowOpen;
 
     public Simulation(Zone zone) {
         this.zone = zone;
@@ -28,11 +30,11 @@ public class Simulation {
 
         switch (command) {
             case DeployCommand deploy -> deploy(deploy);
-            case ReportCommand ignored -> report.add(robot.report());
             case PitCommand pit -> addPit(pit);
             case MoveCommand ignored -> move();
-            case LeftCommand ignored -> robot.turnLeft();
-            case RightCommand ignored -> robot.turnRight();
+            case LeftCommand ignored -> turnLeft();
+            case RightCommand ignored -> turnRight();
+            case ReportCommand ignored -> report.add(robot.report());
         }
     }
 
@@ -58,9 +60,13 @@ public class Simulation {
         } else {
             robot.deployTo(deploy.position(), deploy.facing());
         }
+        pitWindowOpen = true;
     }
 
     private void addPit(PitCommand pit) throws CommandIgnoredException {
+        if (!pitWindowOpen) {
+            throw new CommandIgnoredException("ignored: PIT must follow a DEPLOY or another PIT");
+        }
         if (!zone.contains(pit.position())) {
             throw new CommandIgnoredException("ignored: pit is outside the zone");
         }
@@ -74,6 +80,8 @@ public class Simulation {
     }
 
     private void move() {
+        // A MOVE closes the PIT window even when it is rejected below.
+        pitWindowOpen = false;
         Position target = robot.nextPosition();
         if (!zone.contains(target)) {
             report.add(Rejection.OUTSIDE_ZONE.message());
@@ -84,5 +92,15 @@ public class Simulation {
             return;
         }
         robot.move();
+    }
+
+    private void turnLeft() {
+        pitWindowOpen = false;
+        robot.turnLeft();
+    }
+
+    private void turnRight() {
+        pitWindowOpen = false;
+        robot.turnRight();
     }
 }
