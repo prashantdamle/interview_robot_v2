@@ -366,6 +366,26 @@ public class RobotSimulatorTest {
     }
 
     @Test
+    @DisplayName("empty input gives an empty report and logs nothing")
+    void emptyInputGivesEmptyReport() {
+        ByteArrayOutputStream errors = new ByteArrayOutputStream();
+        RobotSimulator simulator = new RobotSimulator(new PrintStream(errors, true, StandardCharsets.UTF_8));
+
+        List<String> report = simulator.process(new ByteArrayInputStream(new byte[0]));
+
+        assertEquals(List.of(), report);
+        assertEquals("", errors.toString(StandardCharsets.UTF_8));
+    }
+
+    @Test
+    @DisplayName("a last line without a trailing \\n is still processed")
+    void processesLastLineWithoutNewline() {
+        InputStream input = new ByteArrayInputStream("DEPLOY 0,0,NORTH\nREPORT".getBytes(StandardCharsets.UTF_8));
+
+        assertEquals(List.of("0,0,NORTH"), robotSimulator.process(input));
+    }
+
+    @Test
     @DisplayName("a UTF-8 byte-order mark at the start of the input is ignored")
     void ignoresByteOrderMark() {
         List<String> report = robotSimulator.process(lines("﻿DEPLOY 0,0,NORTH", "REPORT"));
