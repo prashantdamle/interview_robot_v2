@@ -55,6 +55,7 @@ public class RobotSimulator {
 
     private static final int ZONE_WIDTH = 10;
     private static final int ZONE_HEIGHT = 10;
+    private static final String BYTE_ORDER_MARK = "﻿";
 
     private final CommandParser parser = new CommandParser();
     private final PrintStream errors;
@@ -88,6 +89,10 @@ public class RobotSimulator {
             String line;
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
+                // Some editors start UTF-8 files with an invisible byte-order mark; the decoder keeps it as a character.
+                if (lineNumber == 1 && line.startsWith(BYTE_ORDER_MARK)) {
+                    line = line.substring(BYTE_ORDER_MARK.length());
+                }
                 try {
                     simulation.apply(parser.parse(line));
                 } catch (CommandParseException | CommandIgnoredException e) {

@@ -365,6 +365,14 @@ public class RobotSimulatorTest {
         assertEquals(List.of("0,1,NORTH"), report);
     }
 
+    @Test
+    @DisplayName("a UTF-8 byte-order mark at the start of the input is ignored")
+    void ignoresByteOrderMark() {
+        List<String> report = robotSimulator.process(lines("﻿DEPLOY 0,0,NORTH", "REPORT"));
+
+        assertEquals(List.of("0,0,NORTH"), report);
+    }
+
     /**
      * @return an input stream of the given lines, each terminated by \n.
      */
