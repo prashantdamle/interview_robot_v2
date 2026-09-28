@@ -343,6 +343,16 @@ public class RobotSimulatorTest {
                 errors.toString(StandardCharsets.UTF_8).lines().toList());
     }
 
+    @Test
+    @DisplayName("each process() call starts on an empty board, so pits and the robot don't carry over")
+    void eachProcessCallStartsFresh() {
+        robotSimulator.process(lines("DEPLOY 0,0,NORTH", "PIT 0,1"));
+
+        List<String> report = robotSimulator.process(lines("REPORT", "DEPLOY 0,1,NORTH", "REPORT"));
+
+        assertEquals(List.of("0,1,NORTH"), report);
+    }
+
     /**
      * @return an input stream of the given lines, each terminated by \n.
      */
