@@ -1,4 +1,16 @@
+import com.nuix.interview.robot.CommandIgnoredException;
+import com.nuix.interview.robot.CommandParseException;
+import com.nuix.interview.robot.CommandParser;
+import com.nuix.interview.robot.Simulation;
+import com.nuix.interview.robot.Zone;
+
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -40,13 +52,52 @@ import java.util.List;
  * REPORT
  */
 public class RobotSimulator {
+
+    private static final int ZONE_WIDTH = 10;
+    private static final int ZONE_HEIGHT = 10;
+
+    private final CommandParser parser = new CommandParser();
+    private final PrintStream errors;
+
+    public RobotSimulator() {
+        this(System.err);
+    }
+
+    /**
+     * @param errors where lines that are malformed or ignored are logged.
+     */
+    public RobotSimulator(PrintStream errors) {
+        this.errors = errors;
+    }
+
     /**
      * Should process the input and return the report lines as result.
+     * <p>
+     * The input is read one line at a time, so it can be of any length, and it is left open for the caller.
      *
      * @param input the input.
      * @return the reported lines.
+     * @throws UncheckedIOException if the input can't be read.
      */
     public List<String> process(InputStream input) {
-        throw new UnsupportedOperationException();
+        Simulation simulation = new Simulation(new Zone(ZONE_WIDTH, ZONE_HEIGHT));
+        // Not closed: closing the reader would close the caller's stream.
+        BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));
+        int lineNumber = 0;
+        try {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+                try {
+                    simulation.apply(parser.parse(line));
+                } catch (CommandParseException | CommandIgnoredException e) {
+                    errors.println("Line " + lineNumber + ": '" + line + "' " + e.getMessage());
+                }
+            }
+        } catch (IOException e) {
+            errors.println("Failed to read input after line " + lineNumber + ": " + e.getMessage());
+            throw new UncheckedIOException("Failed to read input after line " + lineNumber, e);
+        }
+        return simulation.report();
     }
 }
