@@ -60,7 +60,10 @@ public class Simulation {
         }
     }
 
-    private void addPit(PitCommand pit) {
+    private void addPit(PitCommand pit) throws CommandIgnoredException {
+        if (!zone.contains(pit.position())) {
+            throw new CommandIgnoredException("ignored: pit is outside the zone");
+        }
         if (pit.position().equals(robot.position())) {
             report.add(Rejection.ROBOT_DETECTED.message());
             return;

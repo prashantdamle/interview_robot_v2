@@ -61,6 +61,18 @@ class SimulationTest {
     }
 
     @Test
+    @DisplayName("PIT outside the zone is ignored without a report line")
+    void pitOutsideZoneIsIgnored() throws CommandIgnoredException {
+        simulation.apply(new DeployCommand(new Position(0, 0), Direction.NORTH));
+
+        assertAll(
+                () -> assertThrows(CommandIgnoredException.class, () -> simulation.apply(new PitCommand(new Position(10, 3)))),
+                () -> assertThrows(CommandIgnoredException.class, () -> simulation.apply(new PitCommand(new Position(3, -1)))),
+                () -> assertEquals(List.of(), simulation.report())
+        );
+    }
+
+    @Test
     @DisplayName("every command before the first DEPLOY is ignored, including REPORT")
     void ignoresCommandsBeforeFirstDeploy() {
         assertAll(
