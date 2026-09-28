@@ -1,0 +1,37 @@
+package com.nuix.interview.robot;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+class SimulationTest {
+
+    private final Simulation simulation = new Simulation(new Zone(10, 10));
+
+    @Test
+    @DisplayName("REPORT after a DEPLOY reports the robot's position and direction")
+    void reportsDeployedRobot() throws CommandIgnoredException {
+        simulation.apply(new DeployCommand(new Position(1, 2), Direction.EAST));
+        simulation.apply(new ReportCommand());
+
+        assertEquals(List.of("1,2,EAST"), simulation.report());
+    }
+
+    @Test
+    @DisplayName("every command before the first DEPLOY is ignored, including REPORT")
+    void ignoresCommandsBeforeFirstDeploy() {
+        assertAll(
+                () -> assertThrows(CommandIgnoredException.class, () -> simulation.apply(new ReportCommand())),
+                () -> assertThrows(CommandIgnoredException.class, () -> simulation.apply(new PitCommand(new Position(1, 1)))),
+                () -> assertThrows(CommandIgnoredException.class, () -> simulation.apply(new MoveCommand())),
+                () -> assertThrows(CommandIgnoredException.class, () -> simulation.apply(new LeftCommand())),
+                () -> assertThrows(CommandIgnoredException.class, () -> simulation.apply(new RightCommand())),
+                () -> assertEquals(List.of(), simulation.report())
+        );
+    }
+}
