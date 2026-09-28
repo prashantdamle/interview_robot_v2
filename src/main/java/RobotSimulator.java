@@ -12,6 +12,7 @@ import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The application is a simulation of a Rover Robot moving on a square zone to be explored, of
@@ -55,6 +56,7 @@ public class RobotSimulator {
 
     private static final int ZONE_WIDTH = 10;
     private static final int ZONE_HEIGHT = 10;
+    private static final String BYTE_ORDER_MARK = "﻿";
 
     private final CommandParser parser = new CommandParser();
     private final PrintStream errors;
@@ -67,7 +69,7 @@ public class RobotSimulator {
      * @param errors where lines that are malformed or ignored are logged.
      */
     public RobotSimulator(PrintStream errors) {
-        this.errors = errors;
+        this.errors = Objects.requireNonNull(errors, "errors");
     }
 
     /**
@@ -80,14 +82,19 @@ public class RobotSimulator {
      * @throws UncheckedIOException if the input can't be read.
      */
     public List<String> process(InputStream input) {
+        Objects.requireNonNull(input, "input");
         Simulation simulation = new Simulation(new Zone(ZONE_WIDTH, ZONE_HEIGHT));
         // Not closed: closing the reader would close the caller's stream.
         BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));
-        int lineNumber = 0;
+        long lineNumber = 0;
         try {
             String line;
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
+                // Some editors start UTF-8 files with an invisible byte-order mark; the decoder keeps it as a character.
+                if (lineNumber == 1 && line.startsWith(BYTE_ORDER_MARK)) {
+                    line = line.substring(BYTE_ORDER_MARK.length());
+                }
                 try {
                     simulation.apply(parser.parse(line));
                 } catch (CommandParseException | CommandIgnoredException e) {

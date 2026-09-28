@@ -365,6 +365,45 @@ public class RobotSimulatorTest {
         assertEquals(List.of("0,1,NORTH"), report);
     }
 
+    @Test
+    @DisplayName("empty input gives an empty report and logs nothing")
+    void emptyInputGivesEmptyReport() {
+        ByteArrayOutputStream errors = new ByteArrayOutputStream();
+        RobotSimulator simulator = new RobotSimulator(new PrintStream(errors, true, StandardCharsets.UTF_8));
+
+        List<String> report = simulator.process(new ByteArrayInputStream(new byte[0]));
+
+        assertEquals(List.of(), report);
+        assertEquals("", errors.toString(StandardCharsets.UTF_8));
+    }
+
+    @Test
+    @DisplayName("a last line without a trailing \\n is still processed")
+    void processesLastLineWithoutNewline() {
+        InputStream input = new ByteArrayInputStream("DEPLOY 0,0,NORTH\nREPORT".getBytes(StandardCharsets.UTF_8));
+
+        assertEquals(List.of("0,0,NORTH"), robotSimulator.process(input));
+    }
+
+    @Test
+    @DisplayName("a UTF-8 byte-order mark at the start of the input is ignored")
+    void ignoresByteOrderMark() {
+        List<String> report = robotSimulator.process(lines("﻿DEPLOY 0,0,NORTH", "REPORT"));
+
+        assertEquals(List.of("0,0,NORTH"), report);
+    }
+
+    @Test
+    @DisplayName("a null error stream or input is rejected straight away with a clear message")
+    void rejectsNullArguments() {
+        assertAll(
+                () -> assertEquals("errors",
+                        assertThrows(NullPointerException.class, () -> new RobotSimulator(null)).getMessage()),
+                () -> assertEquals("input",
+                        assertThrows(NullPointerException.class, () -> robotSimulator.process(null)).getMessage())
+        );
+    }
+
     /**
      * @return an input stream of the given lines, each terminated by \n.
      */
