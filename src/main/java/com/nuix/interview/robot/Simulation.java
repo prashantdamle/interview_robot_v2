@@ -29,7 +29,7 @@ public class Simulation {
         switch (command) {
             case DeployCommand deploy -> deploy(deploy);
             case ReportCommand ignored -> report.add(robot.report());
-            case PitCommand pit -> pits.add(pit.position());
+            case PitCommand pit -> addPit(pit);
             case MoveCommand ignored -> throw new UnsupportedOperationException("MOVE not implemented yet");
             case LeftCommand ignored -> throw new UnsupportedOperationException("LEFT not implemented yet");
             case RightCommand ignored -> throw new UnsupportedOperationException("RIGHT not implemented yet");
@@ -58,5 +58,13 @@ public class Simulation {
         } else {
             robot.deployTo(deploy.position(), deploy.facing());
         }
+    }
+
+    private void addPit(PitCommand pit) {
+        if (pit.position().equals(robot.position())) {
+            report.add(Rejection.ROBOT_DETECTED.message());
+            return;
+        }
+        pits.add(pit.position());
     }
 }
