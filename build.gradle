@@ -5,6 +5,10 @@ plugins {
 group = 'com.nuix.interview'
 version = '1.0-SNAPSHOT'
 
+tasks.withType(JavaCompile).configureEach {
+    options.release = 21
+}
+
 repositories {
     mavenCentral()
 }
