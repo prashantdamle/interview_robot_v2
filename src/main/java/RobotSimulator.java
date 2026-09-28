@@ -86,7 +86,7 @@ public class RobotSimulator {
         Simulation simulation = new Simulation(new Zone(ZONE_WIDTH, ZONE_HEIGHT));
         // Not closed: closing the reader would close the caller's stream.
         BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));
-        int lineNumber = 0;
+        long lineNumber = 0;
         try {
             String line;
             while ((line = reader.readLine()) != null) {
