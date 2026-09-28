@@ -3,11 +3,13 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -245,6 +247,8 @@ public class RobotSimulatorTest {
             try {
                 is.reset();
             } catch (Exception e) {
+                // TODO: closing a ByteArrayInputStream has no effect, so reset() never throws here and this check can
+                //  never fail. Recommend deleting it; doesNotCloseInput() checks the stream is left open.
                 fail("Input stream seems to have been closed.");
             }
             process = robotSimulator.process(is);
@@ -299,6 +303,23 @@ public class RobotSimulatorTest {
                 "Line 3: 'RIHT' not parsed: not a valid command",
                 "Line 5: 'PIT 3,3' ignored: PIT must follow a DEPLOY or another PIT"
         ), errors.toString(StandardCharsets.UTF_8).lines().toList());
+    }
+
+    @Test
+    @DisplayName("leaves the input stream open for the caller")
+    void doesNotCloseInput() {
+        AtomicBoolean closed = new AtomicBoolean(false);
+        InputStream input = new FilterInputStream(lines("DEPLOY 0,0,NORTH", "REPORT")) {
+            @Override
+            public void close() throws IOException {
+                closed.set(true);
+                super.close();
+            }
+        };
+
+        robotSimulator.process(input);
+
+        assertFalse(closed.get(), "process() closed the caller's input stream");
     }
 
     /**
