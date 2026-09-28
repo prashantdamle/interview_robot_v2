@@ -43,6 +43,19 @@ class RobotTest {
     }
 
     @Test
+    @DisplayName("deployTo() places the same robot at a new position and direction")
+    void deployToRepositionsTheRobot() {
+        Robot robot = new Robot(new Position(2, 3), Direction.SOUTH);
+
+        robot.deployTo(new Position(7, 1), Direction.WEST);
+
+        assertAll(
+                () -> assertEquals(new Position(7, 1), robot.position()),
+                () -> assertEquals(Direction.WEST, robot.facing())
+        );
+    }
+
+    @Test
     @DisplayName("report() formats the robot as X,Y,DIRECTION")
     void reportFormatsPositionAndDirection() {
         Robot robot = new Robot(new Position(1, 0), Direction.EAST);

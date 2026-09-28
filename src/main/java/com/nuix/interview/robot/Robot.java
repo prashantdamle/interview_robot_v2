@@ -27,6 +27,14 @@ public class Robot {
     }
 
     /**
+     * Redeploys this robot to a new position and direction. The caller checks the position is safe first.
+     */
+    public void deployTo(Position position, Direction facing) {
+        this.position = position;
+        this.facing = facing;
+    }
+
+    /**
      * @return the position one step ahead in the direction the robot faces. The robot doesn't move.
      */
     public Position nextPosition() {
