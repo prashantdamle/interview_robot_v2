@@ -30,7 +30,7 @@ public class Simulation {
             case DeployCommand deploy -> deploy(deploy);
             case ReportCommand ignored -> report.add(robot.report());
             case PitCommand pit -> addPit(pit);
-            case MoveCommand ignored -> throw new UnsupportedOperationException("MOVE not implemented yet");
+            case MoveCommand ignored -> move();
             case LeftCommand ignored -> throw new UnsupportedOperationException("LEFT not implemented yet");
             case RightCommand ignored -> throw new UnsupportedOperationException("RIGHT not implemented yet");
         }
@@ -71,5 +71,18 @@ public class Simulation {
         if (!pits.add(pit.position())) {
             throw new CommandIgnoredException("ignored: there is already a pit at " + pit.position().x() + "," + pit.position().y());
         }
+    }
+
+    private void move() {
+        Position target = robot.nextPosition();
+        if (!zone.contains(target)) {
+            report.add(Rejection.OUTSIDE_ZONE.message());
+            return;
+        }
+        if (pits.contains(target)) {
+            report.add(Rejection.PIT_DETECTED.message());
+            return;
+        }
+        robot.move();
     }
 }

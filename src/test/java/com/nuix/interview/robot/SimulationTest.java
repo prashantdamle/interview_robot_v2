@@ -85,6 +85,38 @@ class SimulationTest {
     }
 
     @Test
+    @DisplayName("MOVE moves the robot one step forward on a clear path")
+    void movesForwardOnClearPath() throws CommandIgnoredException {
+        simulation.apply(new DeployCommand(new Position(0, 0), Direction.NORTH));
+        simulation.apply(new MoveCommand());
+        simulation.apply(new MoveCommand());
+        simulation.apply(new ReportCommand());
+
+        assertEquals(List.of("0,2,NORTH"), simulation.report());
+    }
+
+    @Test
+    @DisplayName("MOVE off the zone reports 'Outside Zone' and leaves the robot where it was")
+    void moveOffZoneIsRejected() throws CommandIgnoredException {
+        simulation.apply(new DeployCommand(new Position(0, 9), Direction.NORTH));
+        simulation.apply(new MoveCommand());
+        simulation.apply(new ReportCommand());
+
+        assertEquals(List.of("Outside Zone: Ignored", "0,9,NORTH"), simulation.report());
+    }
+
+    @Test
+    @DisplayName("MOVE into a pit reports 'PIT Detected' and leaves the robot where it was")
+    void moveIntoPitIsRejected() throws CommandIgnoredException {
+        simulation.apply(new DeployCommand(new Position(0, 0), Direction.NORTH));
+        simulation.apply(new PitCommand(new Position(0, 1)));
+        simulation.apply(new MoveCommand());
+        simulation.apply(new ReportCommand());
+
+        assertEquals(List.of("PIT Detected: Ignored", "0,0,NORTH"), simulation.report());
+    }
+
+    @Test
     @DisplayName("every command before the first DEPLOY is ignored, including REPORT")
     void ignoresCommandsBeforeFirstDeploy() {
         assertAll(
