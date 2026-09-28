@@ -171,7 +171,7 @@ public class TestRobotSimulator {
         try (InputStream is = new ByteArrayInputStream(input.toString().getBytes())) {
             List<String> process = robotSimulator.process(is);
             System.out.println(process);
-            assertArrayEquals(process.toArray(new String[0]), new String[]{"Outside Zone: Ignored", "Outside Zone: Ignored", "1,1,EAST"});
+            assertArrayEquals(new String[]{"Outside Zone: Ignored", "Outside Zone: Ignored", "1,1,EAST"}, process.toArray(new String[0]));
         } catch (Exception e) {
             e.printStackTrace();
             fail("Exception thrown: " + e.getMessage());
@@ -191,7 +191,7 @@ public class TestRobotSimulator {
         try (InputStream is = new ByteArrayInputStream(input.toString().getBytes())) {
             List<String> process = robotSimulator.process(is);
             System.out.println(process);
-            assertArrayEquals(process.toArray(new String[0]), new String[]{"0,1,EAST"});
+            assertArrayEquals(new String[]{"0,1,EAST"}, process.toArray(new String[0]));
         } catch (Exception e) {
             e.printStackTrace();
             fail("Exception thrown: " + e.getMessage());
@@ -214,7 +214,7 @@ public class TestRobotSimulator {
         try (InputStream is = new ByteArrayInputStream(input.toString().getBytes())) {
             List<String> process = robotSimulator.process(is);
             System.out.println(process);
-            assertArrayEquals(process.toArray(new String[0]), new String[]{"Outside Zone: Ignored", "Outside Zone: Ignored", "Outside Zone: Ignored", "Outside Zone: Ignored", "0,0,WEST"});
+            assertArrayEquals(new String[]{"Outside Zone: Ignored", "Outside Zone: Ignored", "Outside Zone: Ignored", "Outside Zone: Ignored", "0,0,WEST"}, process.toArray(new String[0]));
         } catch (Exception e) {
             e.printStackTrace();
             fail("Exception thrown: " + e.getMessage());
